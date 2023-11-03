@@ -98,8 +98,6 @@ endif()
 add_library(platform_wsi INTERFACE)
 if(WIN32)
     target_compile_definitions(platform_wsi INTERFACE VK_USE_PLATFORM_WIN32_KHR)
-elseif(ANDROID)
-    message(FATAL_ERROR "Android build not supported!")
 elseif(APPLE)
     target_compile_definitions(platform_wsi INTERFACE VK_USE_PLATFORM_MACOS_MVK VK_USE_PLATFORM_METAL_EXT)
 elseif(UNIX AND NOT APPLE) # i.e.: Linux
@@ -110,6 +108,9 @@ elseif(UNIX AND NOT APPLE) # i.e.: Linux
     option(BUILD_WSI_SCREEN_QNX_SUPPORT "Build QNX Screen WSI support" OFF)
 
     find_package(PkgConfig REQUIRED QUIET) # Use PkgConfig to find Linux system libraries
+    if(ANDROID)
+        target_compile_definitions(platform_wsi INTERFACE VK_USE_PLATFORM_ANDROID_KHR)
+    endif()
 
     if(BUILD_WSI_XCB_SUPPORT)
         pkg_check_modules(XCB REQUIRED QUIET IMPORTED_TARGET xcb)
